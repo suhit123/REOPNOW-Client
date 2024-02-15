@@ -1,0 +1,102 @@
+.callContainer{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+.leftcallContainer{
+    width: 70vw;
+    margin: 10px;
+    height: 97vh;
+}
+.leftcallContainerTop{
+    height: 80vh;
+    border-radius:10px;
+    box-shadow: 5px 10px 30px grey;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+.imageDiv{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.imageDiv img{
+    width: auto;
+    height: 100%;
+}
+.rightcallContainer{
+    width: 28vw;
+    border-radius:10px;
+    margin: 10px;
+    box-shadow: 5px 10px 30px grey;
+    height: 97vh;
+}
+.leftcallContainerBottom{
+    display: flex;
+    align-items: center;
+    height: 18vh;
+    overflow: hidden;
+}
+.leftcallContainerBottom img{
+    width: 150px;
+    height: auto;
+}
+.title{
+    margin-left:20px ;
+}
+.title p{
+    margin: 0px;
+    padding: 0px;
+    font-size: 25px;
+    color: grey;
+}
+.title h1{
+    font-size: 53px;
+    margin: 0px;
+    padding: 0px;
+    background: linear-gradient(45deg, #4CAF50, #2196F3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.fullImageDiv{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    top:0px;
+    left: 0px;
+}
+.controls{
+    display: flex;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+.meetingControl1{
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 5px 10px 20px  black;
+}
+.meetingControl2{
+    padding: 10px;
+    margin: 5px;
+    background-color: rgb(156, 9, 9);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 5px 10px 20px  black;
+}

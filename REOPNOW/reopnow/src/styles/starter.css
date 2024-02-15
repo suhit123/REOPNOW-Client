@@ -1,0 +1,38 @@
+.starterContainer{
+    display: flex;
+    align-items: center;
+    width: max-content;
+    margin: auto;
+    margin-top: 10vh;
+}
+.img1{
+    width: 50vw;
+    height: auto;
+}
+.rightContainer{
+    width: 40vw;
+}
+.rightContainer h3{
+    font-size: 30px;
+    margin: 0px;
+    color: rgb(84, 82, 82);
+}
+.rightContainer form input[type="text"]{
+    padding: 10px;
+    width: 300px;
+    outline: none;
+    border:1px solid grey;
+}
+.rightContainer form button{
+    padding: 10px 20px;
+    background-color: darkorange;
+    border: 1px solid darkorange;
+    color: white;
+}
+.downloadNow{
+    margin: 30px 0px;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}
