@@ -19,7 +19,7 @@
                 return;
             }
 
-            var socket = io('http://172.22.198.67:5000');
+            var socket = io('http://172.22.204.47:5000');
 
             socket.emit("join-message", room);
             socket.on('screen-data', function(message){

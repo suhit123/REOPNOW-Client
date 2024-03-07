@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const { v4: uuidv4 } = require('uuid');
 const screenshot = require('screenshot-desktop');
 var robot=require('robotjs')
-var socket = require('socket.io-client')('http://172.22.198.67:5000');
+var socket = require('socket.io-client')('http://172.22.204.47:5000');
 var interval;
 socket.on('connect', () => {
     console.log('Connected to server');
