@@ -6,63 +6,128 @@ import io from "socket.io-client";
 const Call = () => {
   const [fullScreen, setFullScreen] = useState(false);
   const [img, setImg] = useState("");
-  const [messages,SetMessages]=useState([
-  {
-    id:'1',
-    name:'Me',
-    message:'Hello'
-  },
-  {
-    id:'2',
-    name:'eswar',
-    message:'Hi! My name is suhit.'
-  },
-  {
-    id:'1',
-    name:'Me',
-    message:'Ok Iam from bengaluru'
-  },
-  {
-    id:'2',
-    name:'eswar',
-    message:'Iam from Nellore'
-  },
-  ]);
+  const [message,setMessage]=useState('');
+  const [messages,SetMessages]=useState([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [socket,setSocket]=useState(null);
+  const [stream,setStream]=useState(false);
+  const [opponentName,setOpponentName]=useState('');
+  const [myName,setMyName]=useState('Eswar');
+  const [endSession,setEndSession]=useState(false);
+  const [roomId,setRoomId]=useState('');
   useEffect(() => {
-    const socket = io("http://172.22.204.47:5000");
-    const room = "test";
-    console.log(socket);
+    const url = new URL(window.location.href);
+    const roomId = url.searchParams.get('roomId');
+    setRoomId(roomId);
+  }, []);
+  useEffect(() => {
+    const socket = io("http://172.22.192.134:5000");
+    setSocket(socket);
+    if(socket===null){
+      setEndSession(true);
+      return;
+    }
+    const room = roomId;
     socket.emit("join-message", room);
-    socket.on("screen-data", function (message) {
-      setImg("data:image/png;base64," + message);
-    });
+    socket.emit("send-name", JSON.stringify({ "name": myName, "room": roomId }));
     return () => {
       socket.disconnect(); // Disconnect when component unmounts
     };
-  }, []);
+  }, [roomId]);
+  useEffect(() => {
+    if(socket==null)return;
+    socket.on("send-name", function (message) {
+      setOpponentName(JSON.parse(message).name);
+    });
+    return () => {
+      socket.off("send-name"); // Disconnect when component unmounts
+    };
+  }, [socket]);
+  useEffect(() => {
+    if(socket==null)return;
+    socket.on("screen-data", function (message) {
+      setStream(true);
+      setImg("data:image/png;base64," + message);
+    });
+    return () => {
+      socket.off("screen-data"); // Disconnect when component unmounts
+    };
+  }, [socket]);
+  useEffect(() => {
+    if(socket==null)return;
+    socket.on("send-message", function (message) {
+    SetMessages(prevMessages => [...prevMessages, { id: '1', name: JSON.parse(message).name, message: JSON.parse(message).message }]);
+    });
+    return () => {
+      socket.off("send-message"); // Disconnect when component unmounts
+    };
+  },[socket]);
+  useEffect(() => {
+    if(socket==null)return;
+    socket.on("end-session", function (message) {
+      setEndSession(true);
+    });
+    return () => {
+      socket.off("end-session"); // Disconnect when component unmounts
+    };
+  }, [socket]);
+  useEffect(() => {
+    if (endSession===true) {
+      window.location.href='/';
+    }
+  }, [endSession]);
   const handleMouseMove = (event) => {
-    // const { offsetX, offsetY } = event.nativeEvent;
-    // setMousePosition({ x: offsetX, y: offsetY });
-    // const socket = io("http://localhost:5000");
-    // socket.emit("mouse-move", JSON.stringify({ "x": offsetX, "y": offsetY,"room":"test" }));
-    // console.log({ "x": offsetX, "y": offsetY,"room":"test" });
+    if(socket==null ||fullScreen===false)return;
+    const { offsetX, offsetY,currentTarget } = event.nativeEvent;
+    const {width,height}=currentTarget.getBoundingClientRect();
+    setMousePosition({ x: offsetX, y: offsetY });
+    socket.emit("mouse-move", JSON.stringify({ room:roomId,"x": offsetX, "y": offsetY,"room":roomId,screenWidth:width,screenHeight:height }));
   };
   const handleMouseClick = () => {
-    // const socket = io("http://localhost:5000");
-    // socket.emit("mouse-click",JSON.stringify({"room":"test"}));
+    socket.emit("mouse-click",JSON.stringify({"room":roomId}));
   };
+  const handleKeyPress = (event) => {
+    console.log(event.key);
+    socket.emit("key-click", JSON.stringify({ key: event.key, room: roomId}));
+  };
+  const handleSendMessage=()=>{
+    if(socket==null)return;
+    const obj = {};
+    obj.room = roomId;
+    obj.message = message;
+    obj.name=myName;
+    socket.emit("send-message", JSON.stringify(obj));
+    SetMessages([...messages,{id:'1',name:'Me',message:message}]);
+    setMessage('');
+  }
   return (
+    <div className="container">
+    <div className="leftcallContainerBottom">
+          <img src={image2} alt="image" />
+          <div className="title">
+            <h1>REOPNOW</h1>
+            <p>REMOTE OPERATE NOW</p>
+          </div>
+          <div className="doggyDiv">
+            <img className="img2" src={require('./resources/doggy.gif')} alt="image" />
+            <img className="img1" src={require('./resources/doggy.gif')} alt="image" />
+          </div>
+        </div>
     <div className="callContainer">
       <div className="leftcallContainer">
         <div className="leftcallContainerTop">
           <div className={fullScreen ? "fullImageDiv" : "imageDiv"}>
-            <img
+            {stream?<img
               src={img}
               onMouseMove={handleMouseMove}
               onClick={handleMouseClick}
-              alt="img"
-            />
+              onKeyDown={handleKeyPress}
+              alt="image"
+            />:
+            <img
+            style={{width:'500px',height:'auto'}}
+              src={require('../src/resources/buffering.webp')}
+              alt="image"/>}
             <div className="controls">
               {fullScreen ? (
                 <button
@@ -83,33 +148,31 @@ const Call = () => {
             </div>
           </div>
         </div>
-        <div className="leftcallContainerBottom">
-          <img src={image2} alt="image" />
-          <div className="title">
-            <h1>REOPNOW</h1>
-            <p>REMOTE OPERATE NOW</p>
-          </div>
-        </div>
       </div>
       <div className="rightcallContainer">
         <div className="topDiv">
-
+                <div className="profilePng">
+                  <img src={require('./resources/profile.jpg')} alt="image" />
+                </div>
+                <h3>{opponentName}</h3>
         </div>
         <div className="messages">
           {messages.map((item)=>{
             return(
               <div className={`message`}>
-                <p className="messageName">{item.name} :</p>
+                <p className="messageName">{item.name}</p>
                 <p className="messageText">{item.message}</p>
               </div>
             ); 
           })}
         </div>
         <div className="sendMessage">
-          <input className="enterText" type="text" placeholder="Type something" />
-          <button>SEND</button>
+          <input className="enterText" value={message} type="text" placeholder="Type something" onChange={(e)=>{
+            setMessage(e.target.value)}}/>
+          <button onClick={handleSendMessage}>SEND</button>
         </div>
       </div>
+    </div>
     </div>
   );
 };

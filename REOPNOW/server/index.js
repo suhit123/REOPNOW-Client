@@ -33,9 +33,33 @@ io.on('connection', (socket)=> {
         var room =JSON.parse(data).room;
         socket.broadcast.to(room).emit("mouse-click",data);
     })
+    socket.on("keyup",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("keyup",data);
+    })
+    socket.on("key-click",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("key-click",data);
+    })
     socket.on("type",function(data){
         var room =JSON.parse(data).room;
         socket.broadcast.to(room).emit("type",data);
+    })
+    socket.on("send-message",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("send-message",data);
+    })
+    socket.on("is-typing",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("is-typing",data);
+    })
+    socket.on("send-name",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("send-name",data);
+    })
+    socket.on("end-session",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("end-session",data);
     })
 })
 

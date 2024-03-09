@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>REOPNOW</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="header">REOPNOW</div>
-    <div class="code" id="code"></div>
 
-    <div class="container">
-      <button class="btn" id="start" onclick="startShare()">Start Share</button>
-      <button class="btn" id="stop" onclick="stopShare()">Stop Share</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>REOPNOW</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="wholeContainer">
+    <div class="leftContainer">
+      <div class="logo">
+        <img src="./img2.png" alt="" id="image" />
+        <h1>REOPNOW</h1>
+      </div>
+      <div style="display: none;" class="code" id="code"></div>
+      <div style="display: none;" id="code_note">Note: Copy this generated code to remote access.</div>
+      <div class="container">
+        <input class="inputName" type="text" id="inputName" placeholder="Enter your name" onchange="handleChange()"/>
+        <p id="warning" style='margin-bottom:10px;'></p>
+        <button class="btn" id="start" onclick="startShare()">Start Share</button>
+        <button class="btng" id="pause" onclick="pauseShare()">Pause</button>
+        <button class="btn" id="stop" onclick="stopShare()">Stop Share</button>
+      </div>
     </div>
+    <div class="rightContainer" id="chatContainer">
+      <div class="chatHeader">
+        <h1>Chat</h1>
+      </div>
+      <div class="chatBox" id="chatBox"></div>
+      <div class="chattingBox">
+        <input type="text" id="message" placeholder="Type a message" onchange="handleInputChange()" required/>
+        <button class="btn" id="send" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+  <script src="./index.js"></script>
+</body>
 
-    <script src="./index.js"></script>
-  </body>
 </html>

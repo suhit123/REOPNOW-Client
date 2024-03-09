@@ -5,13 +5,15 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "nodemon --exec electron ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@hurdlegroup/robotjs": "^0.11.4",
     "electron": "^28.2.2",
+    "nodemon": "^3.1.0",
     "robotjs": "^0.6.0",
     "screenshot-desktop": "^1.15.0",
     "socket.io-client": "^4.7.4",

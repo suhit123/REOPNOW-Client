@@ -1,16 +1,17 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain ,screen} = require('electron')
 const { v4: uuidv4 } = require('uuid');
 const screenshot = require('screenshot-desktop');
 var robot=require('robotjs')
-var socket = require('socket.io-client')('http://172.22.204.47:5000');
+var socket = require('socket.io-client')('http://172.22.192.134:5000');
 var interval;
+var uuid;
 socket.on('connect', () => {
     console.log('Connected to server');
 });
 function createWindow () {
     const win = new BrowserWindow({
-        width: 500,
-        height: 150,
+        width: 660,
+        height: 480,resizable: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -20,13 +21,18 @@ function createWindow () {
     win.loadFile('index.html')
     socket.on("mouse-move",function(data){
         var data=JSON.parse(data);
-        var x=data.x;
-        var y=data.y;
+        var screenBounds = screen.getPrimaryDisplay().bounds;
+        var x = data.x * (screenBounds.width / data.screenWidth);
+        var y = data.y * (screenBounds.height / data.screenHeight);
         robot.moveMouse(x,y);
         console.log(data);
     })
     socket.on("mouse-click",function(data){
         robot.mouseClick();
+    })
+    socket.on("key-click",function(data){
+        var data=JSON.parse(data);
+        robot.keyTap(data.key);
     })
     socket.on("type",function(data){
         var data=JSON.parse(data);
@@ -50,22 +56,45 @@ app.on('activate', () => {
 
 ipcMain.on("start-share", function(event, arg) {
 
-    var uuid = "test";
+    uuid = uuidv4();
     console.log(uuid);
     socket.emit("join-message", uuid);
     event.reply("uuid", uuid);
+    socket.on("send-message",function(data){
+        var data=JSON.parse(data);
 
+        event.reply("messages",{
+            name:data.name,
+            message:data.message
+        
+        });
+    })
     interval = setInterval(function() {
         screenshot().then((img) => {
-            var imgStr = Buffer.from(img).toString('base64');
+            var imgStr = Buffer.from(img,'base64').toString('base64');
             var obj = {};
             obj.room = uuid;
             obj.image = imgStr;
+            socket.emit("send-name",JSON.stringify({room:uuid,name:arg.name}));
             socket.emit("screen-data", JSON.stringify(obj));
         })
     }, 100)
 })
 
 ipcMain.on("stop-share", function(event, arg) {
+    
+    socket.emit("end-session",JSON.stringify({room:uuid}));
     clearInterval(interval);
+})
+ipcMain.on("send-message", function(event, arg) {
+    var obj = {};
+    obj.room = uuid;
+    obj.message = arg.message;
+    obj.name = arg.name;
+    event.reply("messages",{
+        name:"Me",
+        message:arg.message
+    
+    });
+    socket.emit("send-message", JSON.stringify(obj));
 })
