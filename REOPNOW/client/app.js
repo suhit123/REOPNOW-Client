@@ -69,6 +69,9 @@ ipcMain.on("start-share", function(event, arg) {
         
         });
     })
+    socket.on("end-session",function(data){
+        event.reply("end-session",true);
+    })
     interval = setInterval(function() {
         screenshot().then((img) => {
             var imgStr = Buffer.from(img,'base64').toString('base64');

@@ -8,9 +8,9 @@ var io = require('socket.io')(http, {
   });
 const cors=require('cors');
 app.use(cors());
-app.get('/view', (req, res) => {
-    res.sendFile(__dirname + '/display.html');
-})
+// app.get('/view', (req, res) => {
+//     res.sendFile(__dirname + '/display.html');
+// })
 // io.origins('http://localhost:3000')
 io.on('connection', (socket)=> {
 

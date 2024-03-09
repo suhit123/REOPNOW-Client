@@ -19,6 +19,9 @@ window.onload = function () {
         margin: 0px;">${data.message}</p>`;
         chatBox.appendChild(div);
     })
+    ipcRenderer.on("end-session", (event, data) => {
+        stopShare();
+    })
 }
 
 function handleInputChange() {
