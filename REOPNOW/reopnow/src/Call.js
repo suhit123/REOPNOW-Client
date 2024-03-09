@@ -100,6 +100,11 @@ const Call = () => {
     SetMessages([...messages,{id:'1',name:'Me',message:message}]);
     setMessage('');
   }
+  const handleEndSession=()=>{
+    if(socket==null)return;
+    socket.emit("end-session", JSON.stringify({room:roomId}));
+    setEndSession(true);
+  }
   return (
     <div className="container">
     <div className="leftcallContainerBottom">
@@ -144,7 +149,7 @@ const Call = () => {
                   Maximize
                 </button>
               )}
-              <button className="meetingControl2">End Session</button>
+              <button className="meetingControl2" onClick={handleEndSession}>End Session</button>
             </div>
           </div>
         </div>
