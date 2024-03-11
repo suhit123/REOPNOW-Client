@@ -25,19 +25,24 @@ function createWindow () {
         var x = data.x * (screenBounds.width / data.screenWidth);
         var y = data.y * (screenBounds.height / data.screenHeight);
         robot.moveMouse(x,y);
-        console.log(data);
     })
     socket.on("mouse-click",function(data){
         robot.mouseClick();
     })
     socket.on("key-click",function(data){
         var data=JSON.parse(data);
-        robot.keyTap(data.key);
+        var key=data.key.toLowerCase();
+        console.log(key);
+        robot.keyTap(key);
     })
     socket.on("type",function(data){
         var data=JSON.parse(data);
         robot.keyTap(data.key);
-        })
+    })
+    socket.on("scroll-event",function(data){
+        var data=JSON.parse(data);
+        robot.scrollMouse(data.scrollX,data.scrollY);
+    })
 }
 
 app.whenReady().then(createWindow)

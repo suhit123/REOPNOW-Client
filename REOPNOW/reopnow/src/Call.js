@@ -81,15 +81,32 @@ const Call = () => {
     const { offsetX, offsetY,currentTarget } = event.nativeEvent;
     const {width,height}=currentTarget.getBoundingClientRect();
     setMousePosition({ x: offsetX, y: offsetY });
-    socket.emit("mouse-move", JSON.stringify({ room:roomId,"x": offsetX, "y": offsetY,"room":roomId,screenWidth:width,screenHeight:height }));
+    socket.emit("mouse-move", JSON.stringify({ room:roomId,"x": offsetX, "y": offsetY,"room":roomId,screenWidth:event.target.width,screenHeight:event.target.height }));
+    console.log({ x: offsetX, y: offsetY ,screenWidth:event.target.width,screenHeight:event.target.height})
   };
   const handleMouseClick = () => {
     socket.emit("mouse-click",JSON.stringify({"room":roomId}));
   };
-  const handleKeyPress = (event) => {
-    console.log(event.key);
-    socket.emit("key-click", JSON.stringify({ key: event.key, room: roomId}));
-  };
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      socket.emit("key-click", JSON.stringify({ key: event.key, room: roomId }));
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [socket, roomId]);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      socket.emit("scroll-event", JSON.stringify({ scrollX, scrollY, room: roomId }));
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [socket, roomId]);
   const handleSendMessage=()=>{
     if(socket==null)return;
     const obj = {};
@@ -126,7 +143,6 @@ const Call = () => {
               src={img}
               onMouseMove={handleMouseMove}
               onClick={handleMouseClick}
-              onKeyDown={handleKeyPress}
               alt="image"
             />:
             <img

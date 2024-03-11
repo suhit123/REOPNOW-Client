@@ -6,6 +6,7 @@ var io = require('socket.io')(http, {
       credentials: true
     }
   });
+require('dotenv').config();
 const cors=require('cors');
 app.use(cors());
 // app.get('/view', (req, res) => {
@@ -41,6 +42,10 @@ io.on('connection', (socket)=> {
         var room =JSON.parse(data).room;
         socket.broadcast.to(room).emit("key-click",data);
     })
+    socket.on("scroll-event",function(data){
+        var room =JSON.parse(data).room;
+        socket.broadcast.to(room).emit("scroll-event",data);
+    })
     socket.on("type",function(data){
         var room =JSON.parse(data).room;
         socket.broadcast.to(room).emit("type",data);
@@ -63,7 +68,7 @@ io.on('connection', (socket)=> {
     })
 })
 
-var server_port = process.env.YOUR_PORT || process.env.PORT || 5000;
+var server_port =process.env.PORT;
 http.listen(server_port, () => {
     console.log("Started on : "+ server_port);
 })
