@@ -122,6 +122,28 @@ const Call = () => {
     socket.emit("end-session", JSON.stringify({room:roomId}));
     setEndSession(true);
   }
+  useEffect(() => {
+    const beforeUnloadHandler = (event) => {
+      // // Cancel the event (to prompt the user)
+      // event.preventDefault();
+      // // Chrome requires the event.returnValue to be set
+
+      // // Display a custom modal for confirmation
+      // const confirmationMessage = 'Are you sure you want to leave this page? You will be logged out.';
+      // event.returnValue = confirmationMessage;
+      // if (window.confirm(confirmationMessage)) {
+      //   handleEndSession();
+      //   window.location.href='/';
+      // }
+      return event.returnValue = 'Are you sure you want to leave this page? You will be logged out.';
+    };
+
+    window.addEventListener('beforeunload', beforeUnloadHandler);
+
+    return () => {
+      window.removeEventListener('beforeunload', beforeUnloadHandler);
+    };
+  }, []);
   return (
     <div className="container">
     <div className="leftcallContainerBottom">
